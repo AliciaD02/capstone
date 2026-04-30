@@ -1,0 +1,13 @@
+bank | bank of america | 600.0
+45 | 4 | 600.0
+5 | 43 | -600.0
+amzon order | amazon  | 400.0
+amazon | amazon | -300.0
+order | amazon | 344.0
+invoice | amazon | 89.0
+tv | amazon | 400.0
+invoice  | alicia | 1300.0
+invoice  | alicia | -1300.0
+order | amazon | 300.0
+checkings | chase | -300.0
+amazon | amazon | 400.0
