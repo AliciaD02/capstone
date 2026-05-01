@@ -41,11 +41,15 @@ public class AccountingLedger {//the class start here
             //Display the menu
 
             System.out.println("""
+                    *************************
+                    FINANCIAL TRANSACTIONS
+                    *************************
                     Make your selection:
                     D) Deposit:
                     P) Payment:
                     L) Ledger:
                     X) Exit:
+                    *************************
                     """);
 
             // we need to get users input and store it as a choice
@@ -95,7 +99,7 @@ public class AccountingLedger {//the class start here
 
         System.out.println("Enter amount: ");
         double amount = Double.parseDouble(theScanner.nextLine());
-        //?
+
 
         System.out.println("Deposit added: ");
 
@@ -103,7 +107,7 @@ public class AccountingLedger {//the class start here
 
     }
 
-    public static void payment() {     // this method means when the user selects P = Payment.
+    public static void payment() {     // we need to create a method for the payment
 
         System.out.println("Enter description: ");
         String description = theScanner.nextLine();
@@ -138,20 +142,24 @@ public class AccountingLedger {//the class start here
 
             FileWriter file = new FileWriter("src/main/resources/transactions.csv", true);
             BufferedWriter writer = new BufferedWriter(file);
+
+
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            DateTimeFormatter  timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
             LocalDateTime now = LocalDateTime.now();
+
             String date = now.format(dateFormatter);
             String time = now.format(timeFormatter);
 
 
-           // LocalTime time = LocalTime.now();
-           Transaction theTransaction = new Transaction(date,time,description,vendor,amount);
+            // LocalTime time = LocalTime.now();
+            Transaction theTransaction = new Transaction(date, time, description, vendor, amount);
             writer.write(theTransaction.toString());
             writer.close();
             file.close();
 
-           loadTransaction();
+            loadTransaction();
 
         } catch (Exception e) {
 
@@ -175,7 +183,7 @@ public class AccountingLedger {//the class start here
                 String vendor = parts[3];
                 String amount = parts[4];
 
-                Transaction theTransaction = new Transaction(date,time,description,vendor,Double.parseDouble(amount));
+                Transaction theTransaction = new Transaction(date, time, description, vendor, Double.parseDouble(amount));
                 transactionList.add(theTransaction);
 
             }
@@ -200,23 +208,23 @@ public class AccountingLedger {//the class start here
             //Display the menu
 
             System.out.println("""
+                    *************************
                     Make your selection:
                     A) All:
                     D) Deposits:
                     P) Payment:
                     R) Report:
                     H) Home:
+                    *************************
                     """);
 
             // we need to get users input and store it as a choice
             String choice = theScanner.nextLine();
 
             // after getting the input of the user you have to decide what to do with it
-            // this is where you make the if statement because there is multiple selections
+
 
             // be using a switch tool so it can be easier to read rather than an if statement
-
-
             switch (choice.toUpperCase()) {   //  if user wants to type lowercase you need to add.toLowerCase otherwise default
 
                 case "A":
@@ -229,7 +237,8 @@ public class AccountingLedger {//the class start here
                     displayPayment();
                     break;
                 case "R":
-                    System.out.println("Selected R");
+                    Reports();
+                    break;
                 case "H":
                     running = false;
                     break;
@@ -244,27 +253,12 @@ public class AccountingLedger {//the class start here
         }
 
 
-
     }
-        public static void displayAll(){
 
-            for (Transaction transaction : transactionList) {
-                System.out.print(transaction.toString());
-
-
-            }
-
-
-        }
-    public static void displayDeposit(){
+    public static void displayAll() {    // create method for display all
 
         for (Transaction transaction : transactionList) {
-
-            if (transaction.getAmount() >0 ){
-                System.out.print(transaction.toString());
-            }
-
-
+            System.out.print(transaction.toString());
 
 
         }
@@ -272,27 +266,102 @@ public class AccountingLedger {//the class start here
 
     }
 
-
-    public static void displayPayment(){
+    public static void displayDeposit() {    // method for deposit
 
         for (Transaction transaction : transactionList) {
 
-            if (transaction.getAmount() <0 ){
+            if (transaction.getAmount() > 0) {
                 System.out.print(transaction.toString());
             }
-
-
 
 
         }
 
 
+    }
+
+
+    public static void displayPayment() {              // method for payment
+
+        for (Transaction transaction : transactionList) {
+
+            if (transaction.getAmount() < 0) {
+                System.out.print(transaction.toString());
+            }
+
+
+        }
+
+
+    }
+
+    public static void Reports() {    // method for reports
+        boolean running = true;
+
+        while (running) {
+
+            // created a menu for report so user is able to run reports/run customer search
+            System.out.println("""
+                    ***************************
+                    Reports Menu:
+                    1) Month To Date
+                    2) Previous Month
+                    3) Year To Date
+                    4) Previous Year
+                    5) Search by Vendor
+                    0) Back
+                    ***************************
+                    """);
+
+
+              // created a switch method
+            String choice = theScanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+                    System.out.println("Month to Date selected");
+                    break;
+
+                case "2":
+                    System.out.println("Previous Month selected");
+                    break;
+
+                case "3":
+                    System.out.println("Year To Date selected");
+                    break;
+                case "4":
+                    System.out.println("Previous Year selected");
+                    break;
+                case "5":
+                    searchByVendor();      // the prompt goes inside the method
+                    break;
+                case "0":
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+                    
+                    
+
+            }
+
+
+        }
+    }
+
+    public static void searchByVendor(){   // starts the method
+        System.out.println("Enter vendor name:");
+        String search = theScanner.nextLine().toLowerCase();  // this reads the  input
+
+        for(Transaction transaction: transactionList) {
+
+            if(transaction.getVendor().toLowerCase().contains(search)){
+                System.out.println(transaction.toString());
+            }
+
+        }
     }
 
 }
-
-
-
-
-
-
+    
