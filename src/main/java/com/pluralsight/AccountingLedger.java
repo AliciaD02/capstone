@@ -3,13 +3,20 @@ package com.pluralsight;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileWriter;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class AccountingLedger {//the class start here
 
     // so the scanner is accessible throughout the program
     static Scanner theScanner = new Scanner(System.in);
+    static ArrayList<Transaction> transactionList = new ArrayList<>();
+
 
     // you need a main method to start the class
 
@@ -59,7 +66,7 @@ public class AccountingLedger {//the class start here
                     payment();
                     break;
                 case "L":
-                    Ledger();
+                    ledger();
                     break;
                 case "X":
                     running = false;
@@ -126,28 +133,37 @@ public class AccountingLedger {//the class start here
 
         //The file is open
         try {
-            FileWriter file = new FileWriter("src/main/resources/transactions.csv", true);
+            // .csv is a file the program creates to store data  . csv = Comma Separated Values
+            // you need to get the date = time
 
+            FileWriter file = new FileWriter("src/main/resources/transactions.csv", true);
             BufferedWriter writer = new BufferedWriter(file);
-            writer.write(description + " | " + vendor + " | " + amount + "\n");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter  timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            String date = now.format(dateFormatter);
+            String time = now.format(timeFormatter);
+
+
+           // LocalTime time = LocalTime.now();
+           Transaction theTransaction = new Transaction(date,time,description,vendor,amount);
+            writer.write(theTransaction.toString());
             writer.close();
             file.close();
 
+           loadTransaction();
 
         } catch (Exception e) {
 
             System.out.println(" Error saving transaction. ");
-
-        }   // .csv is a file the program creates to store data  . csv = Comma Separated Values
-        // you need to get the date = time
-
+        }
 
     }
 
 
-    public static void Ledger() {      // this method is used when the user selects L = Ledger
+    public static void loadTransaction() {      // this method is used when the user selects L = Ledger
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/transactions.csv"));
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -159,7 +175,8 @@ public class AccountingLedger {//the class start here
                 String vendor = parts[3];
                 String amount = parts[4];
 
-                System.out.println(date + "|" + time + " | " + description + " | " + vendor + " | " + amount);
+                Transaction theTransaction = new Transaction(date,time,description,vendor,Double.parseDouble(amount));
+                transactionList.add(theTransaction);
 
             }
             reader.close();
@@ -172,6 +189,105 @@ public class AccountingLedger {//the class start here
 
     }
 
+    public static void ledger() {
+
+        boolean running = true;
+
+
+        // I am creating a while loop
+        while (running) {
+
+            //Display the menu
+
+            System.out.println("""
+                    Make your selection:
+                    A) All:
+                    D) Deposits:
+                    P) Payment:
+                    R) Report:
+                    H) Home:
+                    """);
+
+            // we need to get users input and store it as a choice
+            String choice = theScanner.nextLine();
+
+            // after getting the input of the user you have to decide what to do with it
+            // this is where you make the if statement because there is multiple selections
+
+            // be using a switch tool so it can be easier to read rather than an if statement
+
+
+            switch (choice.toUpperCase()) {   //  if user wants to type lowercase you need to add.toLowerCase otherwise default
+
+                case "A":
+                    displayAll();
+                    break;
+                case "D":
+                    displayDeposit();
+                    break;
+                case "P":
+                    displayPayment();
+                    break;
+                case "R":
+                    System.out.println("Selected R");
+                case "H":
+                    running = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid selection please try again");
+                    // input in only needed when you are creating a data.
+
+            }
+
+
+        }
+
+
+
+    }
+        public static void displayAll(){
+
+            for (Transaction transaction : transactionList) {
+                System.out.print(transaction.toString());
+
+
+            }
+
+
+        }
+    public static void displayDeposit(){
+
+        for (Transaction transaction : transactionList) {
+
+            if (transaction.getAmount() >0 ){
+                System.out.print(transaction.toString());
+            }
+
+
+
+
+        }
+
+
+    }
+
+
+    public static void displayPayment(){
+
+        for (Transaction transaction : transactionList) {
+
+            if (transaction.getAmount() <0 ){
+                System.out.print(transaction.toString());
+            }
+
+
+
+
+        }
+
+
+    }
 
 }
 
