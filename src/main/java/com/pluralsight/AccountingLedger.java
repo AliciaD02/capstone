@@ -139,26 +139,29 @@ public class AccountingLedger {//the class start here
         try {
             // .csv is a file the program creates to store data  . csv = Comma Separated Values
             // you need to get the date = time
-
+            //used a FileWriter to open file, i set it to true so it adds data instead of overwriting it (t append mode)
             FileWriter file = new FileWriter("src/main/resources/transactions.csv", true);
             BufferedWriter writer = new BufferedWriter(file);
 
-
+             // wanted this formatter
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+            //used so each transaction saves current d/t
             LocalDateTime now = LocalDateTime.now();
-
             String date = now.format(dateFormatter);
             String time = now.format(timeFormatter);
 
 
-            // LocalTime time = LocalTime.now();
+            // LocalTime time = LocalTime.now();   - changed it to one
+            // created Transaction to store all data (o)
             Transaction theTransaction = new Transaction(date, time, description, vendor, amount);
-            writer.write(theTransaction.toString());
-            writer.close();
-            file.close();
 
+            //writing the transaction into the file
+            writer.write(theTransaction.toString());       //important! need toString to convert (o)
+            writer.close(); //used close so data is saved
+            file.close();
+            //so new updates my program
             loadTransaction();
 
         } catch (Exception e) {
@@ -176,6 +179,9 @@ public class AccountingLedger {//the class start here
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
+
+
+
 
                 String date = parts[0];
                 String time = parts[1];
@@ -208,14 +214,14 @@ public class AccountingLedger {//the class start here
             //Display the menu
 
             System.out.println("""
-                    *************************
+                    **********************************
                     Make your selection:
                     A) All:
                     D) Deposits:
                     P) Payment:
                     R) Report:
                     H) Home:
-                    *************************
+                    **********************************
                     """);
 
             // we need to get users input and store it as a choice
@@ -256,7 +262,7 @@ public class AccountingLedger {//the class start here
     }
 
     public static void displayAll() {    // create method for display all
-
+          // for-each loop to go through every transaction list
         for (Transaction transaction : transactionList) {
             System.out.print(transaction.toString());
 
@@ -267,21 +273,18 @@ public class AccountingLedger {//the class start here
     }
 
     public static void displayDeposit() {    // method for deposit
-
+           // did the same thing on displayAll method
         for (Transaction transaction : transactionList) {
 
             if (transaction.getAmount() > 0) {
                 System.out.print(transaction.toString());
             }
 
-
         }
-
 
     }
 
-
-    public static void displayPayment() {              // method for payment
+    public static void displayPayment() {          // method for payment
 
         for (Transaction transaction : transactionList) {
 
@@ -302,7 +305,7 @@ public class AccountingLedger {//the class start here
 
             // created a menu for report so user is able to run reports/run customer search
             System.out.println("""
-                    ***************************
+                    ******************************
                     Reports Menu:
                     1) Month To Date
                     2) Previous Month
@@ -310,7 +313,7 @@ public class AccountingLedger {//the class start here
                     4) Previous Year
                     5) Search by Vendor
                     0) Back
-                    ***************************
+                    ******************************
                     """);
 
 
